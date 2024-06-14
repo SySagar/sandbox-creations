@@ -1,0 +1,22 @@
+*{
+margin: 0;
+}
+
+body {
+ 
+    min-height: 100vh;
+  }
+
+  .todo-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    animation: fadeIn 0.5s;
+
+  }
+
+  .todo-item:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
