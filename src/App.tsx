@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import { ID } from "appwrite";
 import { databases, databaseId, collectionId } from "./utils/client";
+import ClipLoader from "react-spinners/ClipLoader";
 
 type Todo = {
   title: string;
@@ -10,7 +11,7 @@ type Todo = {
 
 function App() {
   const [todo, SetTodo] = useState<Array<Todo>>([]);
-
+  const [loading, setLoading] = useState<boolean>(true);
   const [item, setItem] = useState<Todo>({
     title: "",
     url: ""
@@ -18,6 +19,7 @@ function App() {
 
   useEffect(() => {
     const fetchLinks = async () => {
+      setLoading(true);
       try {
         const response = await databases.listDocuments(databaseId, collectionId);
         SetTodo(
@@ -29,11 +31,14 @@ function App() {
       } catch (error) {
         console.error("Error fetching documents:", error);
       }
+      finally {
+        setLoading(false);
+      }
     };
 
     fetchLinks();
   }
-  , [todo]);
+  , []);
 
 
   const addLink = async () => {
@@ -49,6 +54,13 @@ function App() {
         }
       );
       console.log("Document created successfully:", response);
+      SetTodo([
+        ...todo,
+        {
+          title: item.title,
+          url: item.url,
+        },
+      ]);
       alert("Link added successfully");
     } catch (error) {
       console.error("Error creating document:", error);
@@ -110,7 +122,7 @@ function App() {
           padding: "20px",
         }}
       >
-        {todo.length>0 ? todo.map((todo, index) => (
+        {!loading && todo.length>0 ? todo.map((todo, index) => (
           <div key={index}  
           className="todo-item"
           style={{
@@ -130,6 +142,15 @@ function App() {
             </a>
           </div>
         ))
+      : 
+      loading ? 
+      <ClipLoader
+      color={"#fff"}
+      loading={loading}
+      size={150}
+      aria-label="Loading Spinner"
+      data-testid="loader"
+    />
       :
       <div>
         <p style={{color: "#888380"}}>No links found</p>
